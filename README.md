@@ -81,4 +81,15 @@ You can use any keyword as a wake phrase for the bot. Whenever anyone mentions t
 You can change the source and target language from `src/config.yaml`. Please check the languages we support for transliteration [here](https://docs.neuralspace.ai/transliteration/language-support).
 
 
+## Share on Social Media 👏👏
+Wasn't that quick and easy to do! Would you like to share our tutorial this with your network on social media?
+- **Share on LinkedIn**: [Click here](https://www.linkedin.com/sharing/share-offsite/?url=https://github.com/Neural-Space/neuralspace-transliteration-tutorial=I%20built%20a%20Transliteration%20Twitter%20Bot%20using%20NeuralSpace%20Platform&source=Twitter)
+- **Share on Twitter**: [Click here](http://twitter.com/share?text=I%20built%20a%20Transliteration%20Twitter%20Bot%20using%20@NeuralSpace%20Platform.%20It%20was%20so%20easy%20and%20quick.%20Try%20it%20out!&url=https://github.com/Neural-Space/neuralspace-transliteration-tutorial&hashtags=NLProc,NeuralSpace)
 
+
+
+👉 Check out our [Documentation](https://docs.neuralspace.ai/) for all the Apps and features of the NeuralSpace Platform.
+
+👉 Join the [NeuralSpace Slack Community](https://neuralspacecommunity.slack.com/join/shared_invite/zt-xlj1xr8k-GQrOkp7tRIV9IuI_0GWS7Q#/shared-invite/email) to receive updates and discuss about NLP for low-resource languages with fellow developers.
+
+👉 Read more about the NeuralSpace Platform on [neuralspace.ai](https://www.neuralspace.ai/).
