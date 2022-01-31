@@ -1,0 +1,13 @@
+twitter-auth:
+    CONSUMER_KEY: ""
+    CONSUMER_SECRET: ""
+    TWITTER_ACCESS_TOKEN: ""
+    ACCESS_TOKEN_SECRET: ""
+    BEARER_TOKEN: ""
+
+neuralspace-auth:
+    NEURALSPACE_ACCESS_TOKEN: ""
+
+languages:
+    SRC_LANG: "hi"
+    TGT_LANG: "en"
