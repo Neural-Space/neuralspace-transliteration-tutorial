@@ -2,6 +2,8 @@
 
 This repository contains a tutorial to create a transliteration twitter bot using NeuralSpace's Transliteration APIs.
 
+[Read more about Transliteration](https://docs.neuralspace.ai/transliteration/overview)
+
 You can set your own custom trigger phase, and whenever anyone on twitter replies to a tweet mentioning this phrase, the bot transliterates the tweet in reply.
 
 Let us get started!

@@ -1,9 +1,12 @@
 import json
 from random import sample
+from time import sleep
+import traceback
 from constants import ACCESS_TOKEN_SECRET, BEARER_TOKEN, CONSUMER_KEY, CONSUMER_SECRET, NEURALSPACE_ACCESS_TOKEN, NEURALSPACE_AUTH, NEURALSPACE_TRANSLITERATION_URL, SRC_LANG, TGT_LANG, TWITTER_ACCESS_TOKEN, TWITTER_AUTH, TWITTER_STREAM_RULES_URL, TWITTER_STREAM_URL
 from process_tweet import TweetProcessor
 import tweepy
 import requests, yaml
+from requests.exceptions import ChunkedEncodingError
 
 
 class KeyphraseListener:
@@ -36,8 +39,6 @@ class KeyphraseListener:
 
 
     def get_rules(self):
-        print("Getting rules")
-        print(self.keyphrase)
         response = requests.get(
             TWITTER_STREAM_RULES_URL, auth=self.bearer_oauth
         )
@@ -45,7 +46,6 @@ class KeyphraseListener:
             raise Exception(
                 "Cannot get rules (HTTP {}): {}".format(response.status_code, response.text)
             )
-        print(json.dumps(response.json()))
         return response.json()
 
 
@@ -84,7 +84,6 @@ class KeyphraseListener:
         sample_rules = [
             {"value": f'"{self.keyphrase}"' , "tag": "neuralspace" }
         ]
-        print(sample_rules)
         payload = {"add": sample_rules}
         response = requests.post(
             TWITTER_STREAM_RULES_URL,
@@ -102,29 +101,42 @@ class KeyphraseListener:
         return response
 
     def get_stream(self, set):
-        with requests.get(
-            TWITTER_STREAM_URL, auth=self.bearer_oauth, stream=True,
-        ) as response:
-            print(response.status_code)
-            if response.status_code != 200:
-                raise Exception(
-                    "Cannot get stream (HTTP {}): {}".format(
-                        response.status_code, response.text
-                    )
-                )
-            for response_line in response.iter_lines():
-                if response_line:
-                    json_response = json.loads(response_line)
-                    print(json.dumps(json_response, indent=4, sort_keys=True))
-                    tagged_tweet_id = json_response["data"]["id"]
-                    response = self.get_tweet_response_from_id(tagged_tweet_id)
-                    text = json.loads(response.text)
-                    text_to_transliterate = text["includes"]["tweets"][0]["text"]
-                    print(text_to_transliterate)
-                    if self.keyphrase not in text_to_transliterate:
-                        print(text_to_transliterate)
+        run = 1
+        while run:
+            try: 
+                with requests.get(
+                    TWITTER_STREAM_URL, auth=self.bearer_oauth, stream=True,
+                ) as response:
+                    print(response.status_code)
+                    if response.status_code != 200:
+                        raise Exception(
+                            "Cannot get stream (HTTP {}): {}".format(
+                                response.status_code, response.text
+                            )
+                        )
+                    for response_line in response.iter_lines():
+                        if response_line:
+                            json_response = json.loads(response_line)
+                            print(json.dumps(json_response, indent=4, sort_keys=True))
+                            tagged_tweet_id = json_response["data"]["id"]
+                            response = self.get_tweet_response_from_id(tagged_tweet_id)
+                            text = json.loads(response.text)
+                            if "tweets" in text["includes"]:
+                                text_to_transliterate = text["includes"]["tweets"][0]["text"]
+                                if self.keyphrase not in text_to_transliterate:
+                                    transliterated_text = TweetProcessor(NEURALSPACE_TRANSLITERATION_URL, self.neuralspace_access_token).transliterate_tweet(text_to_transliterate, self.src_language, self.tgt_language)
+                                    response = self.post_to_twitter(self.consumer_key, self.consumer_secret, self.access_token, self.access_token_secret, transliterated_text, tagged_tweet_id)
+                                    print(response)
 
-                        transliterated_text = TweetProcessor(NEURALSPACE_TRANSLITERATION_URL, self.neuralspace_access_token).transliterate_tweet(text_to_transliterate, self.src_language, self.tgt_language)
+            except ChunkedEncodingError as chunkError:
+                print(traceback.format_exc())
+                sleep(6)
+                continue
 
-                        response = self.post_to_twitter(self.consumer_key, self.consumer_secret, self.access_token, self.access_token_secret, transliterated_text, tagged_tweet_id)
-                        print(response)
+            except Exception as e:
+
+                # some other error occurred.. stop the loop
+                print("Stopping loop because of un-handled error")
+                print(traceback.format_exc())
+                run = 0
+
