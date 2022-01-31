@@ -23,7 +23,7 @@ As you see, we will use `tweepy` to post on twitter, a package that provides a v
 
 ## Creating NeuralSpace API Authentication Credentials
 To use transliteration APIs, you will need NeuralSpace's access token. 
-1. Go to [platform.neuralspace.ai](platform.neuralspace.ai) and sign in to your account. If you haven't created an account signup!
+1. Go to [platform.neuralspace.ai](https://platform.neuralspace.ai) and sign in to your account. If you haven't created an account signup!
 2. Click on `Copy access token` as shown in the image below.
 ![twitter-credentials](images/access_token.png)
 3. Save this access token and update it in `src/config.yaml` `NEURALSPACE_ACCESS_TOKEN`.
