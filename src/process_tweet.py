@@ -1,8 +1,6 @@
 import json
 import re
-
 import requests
-
 
 class TweetProcessor:
     def __init__(
@@ -27,7 +25,7 @@ class TweetProcessor:
         tweet = re.sub("@[A-Za-z0-9_]+", "", tweet)
         tweet = re.sub("#[A-Za-z0-9_]+", "", tweet)
         tweet = re.sub(r"(?:\@|http?\://|https?\://|www)\S+", "", tweet)
-        tweet = tweet.replace(",", "")
+        tweet = tweet.replace(",", "").replace("'", "" ).replace("...", "")
         tweet = " ".join(tweet.split())
         return tweet
 

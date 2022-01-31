@@ -161,7 +161,7 @@ class KeyphraseListener:
 
             except ChunkedEncodingError as chunkError:
                 print(traceback.format_exc())
-                sleep(6)
+                sleep(8)
                 continue
 
             except Exception as e:
