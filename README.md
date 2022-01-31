@@ -12,7 +12,7 @@ Let us get started!
 To make the Twitter Bot in Python, we will need to install some packages. Let us make a conda environment. You can use Python == 3.7.
 
 ```
-conda create --name neuralspace-nlu-bot python=3.7
+conda create --name neuralspace-bot python=3.7
 conda activate neuralspace-bot
 pip install -r requirements.txt
 ```
