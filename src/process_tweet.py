@@ -71,7 +71,6 @@ class TweetProcessor:
         sentences = self.split_sentences(text)
         for sentence in sentences:
             sentence = self.clean_tweet(sentence)
-            print(sentence, "\n----\n")
             phrase_to_transliterate = ""
             transliterated_phase = ""
             transliterated_text = ""
