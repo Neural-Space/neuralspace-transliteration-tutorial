@@ -115,14 +115,12 @@ class KeyphraseListener:
         )
         return response
 
-    def get_tweet_id_and_parent_tweet_text(self, json_response, ):
+    def get_tweet_id_and_parent_tweet_text(self, json_response):
         triggered_tweet_id = json_response["data"]["id"]
         response = self.get_tweet_response_from_id(triggered_tweet_id)
         text = json.loads(response.text)
         if "tweets" in text["includes"]:
-            text_to_transliterate = text["includes"]["tweets"][0][
-                "text"
-            ]
+            text_to_transliterate = text["includes"]["tweets"][0]["text"]
         else:
             text_to_transliterate = None
 
@@ -145,9 +143,15 @@ class KeyphraseListener:
                     for response_line in response.iter_lines():
                         if response_line:
                             bot_trigger_response = json.loads(response_line)
-                            print(json.dumps(bot_trigger_response, indent=4, sort_keys = True))
+                            print(
+                                json.dumps(
+                                    bot_trigger_response, indent=4, sort_keys=True
+                                )
+                            )
 
-                            triggered_tweet_id, text_to_transliterate = self.get_tweet_id_and_parent_tweet_text(bot_trigger_response)
+                            triggered_tweet_id, text_to_transliterate = self.get_tweet_id_and_parent_tweet_text(
+                                bot_trigger_response
+                            )
                             if text_to_transliterate is not None:
                                 if self.keyphrase not in text_to_transliterate:
                                     transliterated_text = TweetProcessor(
