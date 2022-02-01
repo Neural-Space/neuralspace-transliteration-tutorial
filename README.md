@@ -1,17 +1,17 @@
-# Neuralspace-Transliteration-Tutorial
+# ![](./images/t13n.svg) Neuralspace-Transliteration-Tutorial
 
 This repository contains a tutorial to create a transliteration twitter bot using NeuralSpace's Transliteration APIs.
 
 [Read more about Transliteration](https://docs.neuralspace.ai/transliteration/overview)
 
-You can set your own custom trigger phase, and whenever anyone on twitter replies to a tweet mentioning this phrase, the bot transliterates the tweet in reply.
+You can set your own custom trigger phase, and whenever anyone on twitter replies to a tweet mentioning this phrase, the bot transliterates the tweet in reply. The bot currently works for hindi to english transliteration, but can be extended to other languages with very minimal changes as mentioned in the end.
 
 Let us get started!
 
 
 ## Install requirements
 
-To make the Twitter Bot in Python, we will need to install some packages. Let us make a conda environment. You can use Python == 3.7.
+To make the Twitter Bot in Python, we will need to install some packages. Let us make a [conda environment](https://docs.conda.io/projects/conda/en/latest/user-guide/getting-started.html). You can use Python >=3.6
 
 ```
 conda create --name neuralspace-bot python=3.7
@@ -36,6 +36,7 @@ The Twitter API requires that all requests use OAuth to authenticate. So you nee
 - CONSUMER_SECRET
 - ACCESS_TOKEN
 - ACCESS_TOKEN_SECRET
+- BEARER TOKEN
 
 If you already have a Twitter user account, then follow these steps to create the key, token, and secrets. Otherwise, you have to sign up as a Twitter user before proceeding.
 
@@ -78,8 +79,14 @@ python main.py -k "@neuralspace transliterate"
 
 You can use any keyword as a wake phrase for the bot. Whenever anyone mentions this phrase as a reply to a hindi tweet, the bot will reply back with it's transliteration in english.
 
-You can change the source and target language from `src/config.yaml`. Please check the languages we support for transliteration [here](https://docs.neuralspace.ai/transliteration/language-support).
+## Extending support to other languages
 
+### STEP 1: Change language code
+You can change the source and target language from `src/config.yaml`. We currently support 42 language pairs which are mentioned [here](https://docs.neuralspace.ai/transliteration/language-support). Just replace the language code with the language you wish to select.
+
+### STEP 2: Modify TweetProcessor
+
+You will also have to modify `TweetProcessor` if you wish to use your bot for other languages. Change the `split_sentences` function with the delimiter of your language.
 
 ## Share on Social Media 👏👏
 Wasn't that quick and easy to do! Would you like to share our tutorial this with your network on social media?
