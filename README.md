@@ -86,7 +86,7 @@ You can change the source and target language from `src/config.yaml`. We current
 
 ### STEP 2: Modify TweetProcessor
 
-You will also have to modify `TweetProcessor` if you wish to use your bot for other languages. Change the `split_sentences` function with the delimiter of your language.
+You will also have to modify `TweetProcessor` in `src` if you wish to use your bot for other languages. Change the `split_sentences` function with the delimiter of your language.
 
 ## Share on Social Media 👏👏
 Wasn't that quick and easy to do! Would you like to share our tutorial this with your network on social media?
