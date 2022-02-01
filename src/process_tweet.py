@@ -26,12 +26,15 @@ class TweetProcessor:
         tweet = re.sub("@[A-Za-z0-9_]+", "", tweet)
         tweet = re.sub("#[A-Za-z0-9_]+", "", tweet)
         tweet = re.sub(r"(?:\@|http?\://|https?\://|www)\S+", "", tweet)
-        tweet = tweet.replace(",", "").replace("'", "").replace("...", "")
+        tweet = (
+            tweet.replace(",", "").replace("'", "").replace("...", "").replace('"', "")
+        )
         tweet = " ".join(tweet.split())
         return tweet
 
     def transliterate_sentence(self, text, src_language: str, tgt_language: str):
         text = text.rstrip()
+        text = text.lstrip()
         transliteration_headers = {
             "Authorization": self.neuralspace_access_token,
             "Content-Type": "application/json",
@@ -58,16 +61,17 @@ class TweetProcessor:
 
     def split_sentences(self, text):
         sentences = []
-        sentences = text.split("।")
+        sentences = re.split("।|\n", text)
         return sentences
 
     def transliterate_tweet(self, text, src_language: str, tgt_language: str):
 
-        text = self.clean_tweet(text)
         transliterated_sentences = []
 
         sentences = self.split_sentences(text)
         for sentence in sentences:
+            sentence = self.clean_tweet(sentence)
+            print(sentence, "\n----\n")
             phrase_to_transliterate = ""
             transliterated_phase = ""
             transliterated_text = ""

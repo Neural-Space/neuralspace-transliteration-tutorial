@@ -93,6 +93,28 @@ class KeyphraseListener:
         )
         return response
 
+    def process_transliterate_and_tweet(
+        self, triggered_tweet_id, text_to_transliterate
+    ):
+        if text_to_transliterate is not None:
+            if self.keyphrase not in text_to_transliterate:
+                transliterated_text = TweetProcessor(
+                    NEURALSPACE_TRANSLITERATION_URL, self.neuralspace_access_token
+                ).transliterate_tweet(
+                    text_to_transliterate, self.src_language, self.tgt_language
+                )
+                response = self.post_to_twitter(
+                    self.consumer_key,
+                    self.consumer_secret,
+                    self.access_token,
+                    self.access_token_secret,
+                    transliterated_text,
+                    triggered_tweet_id,
+                )
+            else:
+                response = None
+        return response
+
     def set_rules(self, delete):
         # You can adjust the rules if needed
         sample_rules = [{"value": f'"{self.keyphrase}"', "tag": "neuralspace"}]
@@ -152,25 +174,11 @@ class KeyphraseListener:
                             triggered_tweet_id, text_to_transliterate = self.get_tweet_id_and_parent_tweet_text(
                                 bot_trigger_response
                             )
-                            if text_to_transliterate is not None:
-                                if self.keyphrase not in text_to_transliterate:
-                                    transliterated_text = TweetProcessor(
-                                        NEURALSPACE_TRANSLITERATION_URL,
-                                        self.neuralspace_access_token,
-                                    ).transliterate_tweet(
-                                        text_to_transliterate,
-                                        self.src_language,
-                                        self.tgt_language,
-                                    )
-                                    response = self.post_to_twitter(
-                                        self.consumer_key,
-                                        self.consumer_secret,
-                                        self.access_token,
-                                        self.access_token_secret,
-                                        transliterated_text,
-                                        triggered_tweet_id,
-                                    )
-                                    print(response)
+                            print(text_to_transliterate)
+                            response = self.process_transliterate_and_tweet(
+                                triggered_tweet_id, text_to_transliterate
+                            )
+                            print(response)
 
             except ChunkedEncodingError as chunkError:
                 print(traceback.format_exc())
