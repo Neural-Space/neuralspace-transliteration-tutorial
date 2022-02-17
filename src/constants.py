@@ -1,7 +1,7 @@
 TWITTER_STREAM_URL = "https://api.twitter.com/2/tweets/search/stream"
 TWITTER_STREAM_RULES_URL = "https://api.twitter.com/2/tweets/search/stream/rules"
 NEURALSPACE_TRANSLITERATION_URL = (
-    "https://platform-dev.neuralspace.ai/api/transliteration/v1/transliterate"
+    "https://platform.neuralspace.ai/api/transliteration/v1/transliterate"
 )
 TWITTER_AUTH = "twitter-auth"
 NEURALSPACE_AUTH = "neuralspace-auth"
