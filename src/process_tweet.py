@@ -118,6 +118,4 @@ class TweetProcessor:
             transliterated_tweetlines.append(transliterated_line)
         transliterated_tweet = ("\n").join(transliterated_tweetlines)
 
-        print(transliterated_tweet)
-
         return transliterated_tweet

@@ -97,7 +97,11 @@ class KeyphraseListener:
         self, triggered_tweet_id, text_to_transliterate
     ):
         if text_to_transliterate is not None:
-            if self.keyphrase not in text_to_transliterate:
+            if (
+                self.keyphrase not in text_to_transliterate.lower()
+                and self.keyphrase.lower() not in text_to_transliterate
+                and self.keyphrase.lower() not in text_to_transliterate.lower()
+            ):
                 transliterated_text = TweetProcessor(
                     NEURALSPACE_TRANSLITERATION_URL, self.neuralspace_access_token
                 ).transliterate_tweet(
@@ -108,7 +112,7 @@ class KeyphraseListener:
                     self.consumer_secret,
                     self.access_token,
                     self.access_token_secret,
-                    transliterated_text,
+                    transliterated_text[:280],
                     triggered_tweet_id,
                 )
             else:
@@ -117,7 +121,7 @@ class KeyphraseListener:
 
     def set_rules(self, delete):
         # You can adjust the rules if needed
-        sample_rules = [{"value": f'"{self.keyphrase}"', "tag": "neuralspace"}]
+        sample_rules = [{"value": f'"{self.keyphrase}"', "tag": "NeuralSpace"}]
         payload = {"add": sample_rules}
         response = requests.post(
             TWITTER_STREAM_RULES_URL, auth=self.bearer_oauth, json=payload
@@ -174,7 +178,7 @@ class KeyphraseListener:
                             triggered_tweet_id, text_to_transliterate = self.get_tweet_id_and_parent_tweet_text(
                                 bot_trigger_response
                             )
-                            print(text_to_transliterate)
+                            print(str(text_to_transliterate))
                             response = self.process_transliterate_and_tweet(
                                 triggered_tweet_id, text_to_transliterate
                             )
@@ -182,7 +186,7 @@ class KeyphraseListener:
 
             except ChunkedEncodingError as chunkError:
                 print(traceback.format_exc())
-                sleep(8)
+                sleep(10)
                 continue
 
             except Exception as e:
