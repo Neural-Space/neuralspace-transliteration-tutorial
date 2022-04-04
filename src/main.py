@@ -12,8 +12,16 @@ from keyword_listener import KeyphraseListener
     prompt=True,
     help="Keyword which will trigger the bot",
 )
-def main(keyword: str):
-    with open("config.yaml", "r") as yamlfile:
+@click.option(
+    "-c",
+    "--config",
+    type=click.STRING,
+    required=True,
+    prompt=True,
+    help="Keyword which will trigger the bot",
+)
+def main(keyword: str, config: str):
+    with open(config, "r") as yamlfile:
         config = yaml.load(yamlfile, Loader=yaml.FullLoader)
 
     listener = KeyphraseListener(keyword, config)

@@ -34,7 +34,6 @@ class KeyphraseListener:
         self.access_token = twitter_config[TWITTER_ACCESS_TOKEN]
         self.access_token_secret = twitter_config[ACCESS_TOKEN_SECRET]
         self.neuralspace_access_token = neuralspace_config[NEURALSPACE_ACCESS_TOKEN]
-        self.src_language = language_config[SRC_LANG]
         self.tgt_language = language_config[TGT_LANG]
 
     def bearer_oauth(self, r):
@@ -103,10 +102,8 @@ class KeyphraseListener:
                 and self.keyphrase.lower() not in text_to_transliterate.lower()
             ):
                 transliterated_text = TweetProcessor(
-                    NEURALSPACE_TRANSLITERATION_URL, self.neuralspace_access_token
-                ).transliterate_tweet(
-                    text_to_transliterate, self.src_language, self.tgt_language
-                )
+                    self.neuralspace_access_token
+                ).transliterate_tweet(text_to_transliterate, self.tgt_language)
                 response = self.post_to_twitter(
                     self.consumer_key,
                     self.consumer_secret,
@@ -153,6 +150,9 @@ class KeyphraseListener:
         return triggered_tweet_id, text_to_transliterate
 
     def get_stream(self, set):
+        wait_time = 60
+        downtime = 0
+
         run = 1
         while run:
             try:
@@ -160,12 +160,14 @@ class KeyphraseListener:
                     TWITTER_STREAM_URL, auth=self.bearer_oauth, stream=True
                 ) as response:
                     print(response.status_code)
+                    print(downtime)
                     if response.status_code != 200:
                         raise Exception(
                             "Cannot get stream (HTTP {}): {}".format(
                                 response.status_code, response.text
                             )
                         )
+                    wait_time = 60
                     for response_line in response.iter_lines():
                         if response_line:
                             bot_trigger_response = json.loads(response_line)
@@ -186,12 +188,20 @@ class KeyphraseListener:
 
             except ChunkedEncodingError as chunkError:
                 print(traceback.format_exc())
+                print("chunked error. Connecting again in 10 seconds...")
                 sleep(10)
+                downtime += 10
                 continue
 
             except Exception as e:
 
                 # some other error occurred.. stop the loop
-                print("Stopping loop because of un-handled error")
+                print(
+                    f"Some error occured. Connecting to stream in {wait_time} seconds..."
+                )
                 print(traceback.format_exc())
-                run = 0
+                print("-----")
+                sleep(wait_time)
+                downtime += wait_time
+                wait_time = wait_time * 2
+                continue

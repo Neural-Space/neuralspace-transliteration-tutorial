@@ -1,20 +1,29 @@
 from gettext import textdomain
 import json
 import re
+from matplotlib.pyplot import text
 import requests
 from sqlalchemy import true
 
+from constants import (
+    NEURALSPAC_LANGUAGE_DETECTION_URL,
+    NEURALSPACE_TRANSLITERATION_URL,
+    LanguageToUnicodeRange,
+)
+
 
 class TweetProcessor:
-    def __init__(
-        self, neuralspace_transliteration_URL: str, neuralspace_access_token: str
-    ):
-        self.neuralspace_transliteration_URL = neuralspace_transliteration_URL
+    def __init__(self, neuralspace_access_token: str):
         self.neuralspace_access_token = neuralspace_access_token
 
-    def is_hindi(self, word):
+    def is_language(self, word, src_language):
+
         maxchar = max(word)
-        if u"\u0900" <= maxchar <= u"\u097f":
+        if (
+            LanguageToUnicodeRange.get(src_language).start
+            <= maxchar
+            <= LanguageToUnicodeRange.get(src_language).end
+        ):
             return True
         else:
             return False
@@ -58,7 +67,7 @@ class TweetProcessor:
                 }
             )
             transliteration_response = requests.post(
-                self.neuralspace_transliteration_URL,
+                NEURALSPACE_TRANSLITERATION_URL,
                 headers=transliteration_headers,
                 data=transliteration_payload,
             )
@@ -71,12 +80,28 @@ class TweetProcessor:
         transliterated_text = (" ").join(transliterated_phrases)
         return transliterated_text
 
-    def split_sentences(self, text):
+    def split_sentences(self, text, src_language: text):
         sentences = []
-        sentences = re.split("।", text)
+        sentences = re.split("\. | ।", text)
         return sentences
 
-    def transliterate_tweet(self, text, src_language: str, tgt_language: str):
+    def detect_language(self, text_to_transliterate):
+        headers = {
+            "Authorization": self.neuralspace_access_token,
+            "Content-Type": "application/json",
+        }
+        text_to_transliterate = self.clean_tweet(text_to_transliterate)
+        payload = json.dumps({"text": text_to_transliterate})
+        response = requests.post(
+            NEURALSPAC_LANGUAGE_DETECTION_URL, headers=headers, data=payload
+        )
+        response_text = json.loads(response.text)
+        print(response_text)
+        detected_language = response_text["data"]["detected_languages"][0]["language"]
+        return detected_language
+
+    def transliterate_tweet(self, text, tgt_language: str):
+        src_language = self.detect_language(text)
         lines = text.splitlines(True)
         transliterated_tweetlines = []
 
@@ -84,7 +109,9 @@ class TweetProcessor:
             if line[-1] == "\n":
                 line = line[:-1]
             transliterated_sentences = []
-            sentences = self.split_sentences(line)
+            sentences = self.split_sentences(line, src_language)
+            print("------splits------------")
+            print(sentences)
             for sentence in sentences:
                 sentence = self.clean_tweet(sentence)
                 phrase_to_transliterate = ""
@@ -92,7 +119,8 @@ class TweetProcessor:
                 transliterated_text = ""
 
                 for word in sentence.split():
-                    if self.is_hindi(word):
+
+                    if self.is_language(word, src_language):
                         phrase_to_transliterate += word
                         phrase_to_transliterate += " "
                     else:
