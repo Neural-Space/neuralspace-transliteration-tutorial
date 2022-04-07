@@ -13,8 +13,9 @@ from constants import (
 
 
 class TweetProcessor:
-    def __init__(self, neuralspace_access_token: str):
+    def __init__(self, neuralspace_access_token: str, target_language: str):
         self.neuralspace_access_token = neuralspace_access_token
+        self.target_language = target_language
 
     def is_language(self, word, src_language):
 
@@ -30,9 +31,9 @@ class TweetProcessor:
 
     def clean_tweet(self, tweet):
         """
-		    Utility function to clean tweet text by removing links, special 
-            characters using simple regex statements.
-		"""
+                Utility function to clean tweet text by removing links, special
+        characters using simple regex statements.
+        """
         tweet = re.sub(r"(http?\://|https?\://|www)\S+", "", tweet)
         tweet = (
             tweet.replace(",", "").replace("'", "").replace("...", "").replace('"', "")
@@ -80,7 +81,7 @@ class TweetProcessor:
         transliterated_text = (" ").join(transliterated_phrases)
         return transliterated_text
 
-    def split_sentences(self, text, src_language: text):
+    def split_sentences(self, text):
         sentences = []
         sentences = re.split("\. | ।", text)
         return sentences
@@ -100,8 +101,17 @@ class TweetProcessor:
         detected_language = response_text["data"]["detected_languages"][0]["language"]
         return detected_language
 
+    def remove_target_language_from_text(self, text):
+        clean_text = ""
+        for word in text.split():
+            if not self.is_language(word, self.target_language):
+                clean_text += word
+                clean_text += " "
+        return clean_text
+
     def transliterate_tweet(self, text, tgt_language: str):
-        src_language = self.detect_language(text)
+        text_without_target_language = self.remove_target_language_from_text(text)
+        src_language = self.detect_language(text_without_target_language)
         lines = text.splitlines(True)
         transliterated_tweetlines = []
 
@@ -109,7 +119,7 @@ class TweetProcessor:
             if line[-1] == "\n":
                 line = line[:-1]
             transliterated_sentences = []
-            sentences = self.split_sentences(line, src_language)
+            sentences = self.split_sentences(line)
             print("------splits------------")
             print(sentences)
             for sentence in sentences:

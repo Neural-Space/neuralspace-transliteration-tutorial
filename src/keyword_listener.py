@@ -102,7 +102,7 @@ class KeyphraseListener:
                 and self.keyphrase.lower() not in text_to_transliterate.lower()
             ):
                 transliterated_text = TweetProcessor(
-                    self.neuralspace_access_token
+                    self.neuralspace_access_token, self.tgt_language
                 ).transliterate_tweet(text_to_transliterate, self.tgt_language)
                 response = self.post_to_twitter(
                     self.consumer_key,
@@ -177,7 +177,10 @@ class KeyphraseListener:
                                 )
                             )
 
-                            triggered_tweet_id, text_to_transliterate = self.get_tweet_id_and_parent_tweet_text(
+                            (
+                                triggered_tweet_id,
+                                text_to_transliterate,
+                            ) = self.get_tweet_id_and_parent_tweet_text(
                                 bot_trigger_response
                             )
                             print(str(text_to_transliterate))

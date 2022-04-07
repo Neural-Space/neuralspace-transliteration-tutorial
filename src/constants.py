@@ -43,4 +43,5 @@ LanguageToUnicodeRange = {
     "mk": UnicodeRange("\u0400", "\u04ff"),
     "sr": UnicodeRange("\u0400", "\u04ff"),
     "el": UnicodeRange("\u0370", "\u03ff"),
+    "en": UnicodeRange("\u0000", "\u007f"),
 }
