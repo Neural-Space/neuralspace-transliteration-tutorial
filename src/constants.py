@@ -34,6 +34,7 @@ LanguageToUnicodeRange = {
     "ta": UnicodeRange("\u0b80", "\u0bff"),
     "te": UnicodeRange("\u0c00", "\u0c7f"),
     "kn": UnicodeRange("\u0c80", "\u0cff"),
+    "pa": UnicodeRange("\u0a00", "\u0a7f"),
     "ar": UnicodeRange("\u0680", "\u06ff"),
     "ml": UnicodeRange("\u0d00", "\u0d7f"),
     "gu": UnicodeRange("\u0a80", "\u0aff"),
