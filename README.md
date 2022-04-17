@@ -4,7 +4,9 @@ This repository contains a tutorial to create a transliteration twitter bot usin
 
 [Read more about Transliteration](https://docs.neuralspace.ai/transliteration/overview)
 
-You can set your own custom trigger phase, and whenever anyone on twitter replies to a tweet mentioning this phrase, the bot transliterates the tweet in reply. The bot currently works for hindi to english transliteration, but can be extended to other languages with very minimal changes as mentioned in the end.
+You can set your own custom trigger phase, and whenever anyone on twitter replies to a tweet mentioning this phrase, the bot transliterates the tweet in reply. The bot automatically detects the language of the tweet using NeuralSpace Language Detection APIs, and transliterates the tweet into the given target language.
+
+Supported Languages : https://docs.neuralspace.ai/transliteration/language-support/
 
 Let us get started!
 
@@ -71,22 +73,13 @@ Save API key in `CONSUMER_KEY`, api key secret in `CONSUMER_SECRET`, access toke
 
 ## Start the Transliteration Bot
 
-After following all the above steps, start your bot using the following commands.
+After following all the above steps, start your bot using the following command. Make sure to add your target language to `config.yaml` after looking at the [supported languages](https://docs.neuralspace.ai/transliteration/language-support/).
 ```bash
 cd src
-python main.py -k "@neuralspace transliterate"
+python main.py -k "@neuralspace transliterate" -c "config.yaml"
 ```
 
-You can use any keyword as a wake phrase for the bot. Whenever anyone mentions this phrase as a reply to a hindi tweet, the bot will reply back with it's transliteration in english.
-
-## Extending support to other languages
-
-### STEP 1: Change language code
-You can change the source and target language from `src/config.yaml`. We currently support 42 language pairs which are mentioned [here](https://docs.neuralspace.ai/transliteration/language-support). Just replace the language code with the language you wish to select.
-
-### STEP 2: Modify TweetProcessor
-
-You will also have to modify `TweetProcessor` in `src` if you wish to use your bot for other languages. Change the `split_sentences` function with the delimiter of your language.
+You can use any keyword as a wake phrase for the bot. Whenever anyone mentions this phrase as a reply to a tweet, the bot will reply back with it's transliteration.
 
 ## Share on Social Media 👏👏
 Wasn't that quick and easy to do! Would you like to share our tutorial this with your network on social media?

@@ -9,5 +9,4 @@ neuralspace-auth:
     NEURALSPACE_ACCESS_TOKEN: ""
 
 languages:
-    SRC_LANG: "hi"
     TGT_LANG: "en"
